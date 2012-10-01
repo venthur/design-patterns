@@ -47,6 +47,16 @@ class Mocha(CondimentDecorator):
         return .20 + self.beverage.cost()
 
 
+class Soy(CondimentDecorator):
+
+    def __init__(self, beverage):
+        self.beverage = beverage
+
+    def getDescription(self):
+        return self.beverage.getDescription() + ", Soy"
+
+    def cost(self):
+        return .15 + self.beverage.cost()
 
 
 if __name__ == '__main__':
@@ -55,6 +65,7 @@ if __name__ == '__main__':
 
     beverage = HouseBlend()
     beverage = Mocha(beverage)
+    beverage = Soy(beverage)
     print beverage.getDescription() + ' $' + str(beverage.cost())
 
 
