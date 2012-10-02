@@ -122,7 +122,18 @@ class CeillingFanLowCommand(Command):
             self.ceillingFan.high()
 
 
+class MacroCommand(Command):
 
+    def __init__(self, commands):
+        self.commands = commands
+
+    def execute(self):
+        for i in self.commands:
+            i.execute()
+
+    def undo(self):
+        for i in self.commands:
+            i.undo()
 
 
 if __name__ == '__main__':
@@ -130,10 +141,21 @@ if __name__ == '__main__':
 
     ceillingFan = CeillingFan()
 
-    remote.setCommand(0, LightOnCommand(), LightOffCommand())
-    remote.setCommand(1, CeillingFanHighCommand(ceillingFan), CeillingFanLowCommand(ceillingFan))
+    lightOnCommand = LightOnCommand()
+    lightOffCommand = LightOffCommand()
+
+    ceillingFanHighCommand = CeillingFanHighCommand(ceillingFan)
+    ceillingFanLowCommand = CeillingFanLowCommand(ceillingFan)
+    partyOnCommand = MacroCommand([ceillingFanHighCommand, lightOnCommand])
+    partyOffCommand = MacroCommand([ceillingFanLowCommand, lightOffCommand])
+
+    remote.setCommand(0, lightOnCommand, lightOffCommand)
+    remote.setCommand(1, ceillingFanHighCommand, ceillingFanLowCommand)
+    remote.setCommand(2, partyOnCommand, partyOffCommand)
 
     for i in range(7):
+        print '---------'
+        print 'Slot', i
         remote.onPushed(i)
         remote.offPushed(i)
         remote.undoPushed()
